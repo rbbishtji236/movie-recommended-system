@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie Recommendation</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Enter a Movie Name for Recommendations</h1>
+
+    <form id="recommendationForm">
+        <input type="text" id="movieInput" name="movie" placeholder="Enter Movie name" required>
+        <button type="submit">Get Recommendations</button>
+    </form>
+
+    <h2>Recommended Movies:</h2>
+    <ul id="recommendationList"></ul>
+
+    <script>
+        $(document).ready(function () {
+            $("#recommendationForm").submit(function (event) {
+                event.preventDefault(); // Prevent page refresh
+
+                var movieName = $("#movieInput").val().trim();
+                if (movieName === "") {
+                    alert("Please enter a movie name!");
+                    return;
+                }
+
+                $.ajax({
+                    url: "/predict",
+                    type: "POST",
+                    data: { movie: movieName },
+                    dataType: "json",
+                    success: function (response) {
+                        $("#recommendationList").empty(); // Clear previous results
+
+                        if (response.error) {
+                            $("#recommendationList").append("<li style='color: red;'>" + response.error + "</li>");
+                        } else {
+                            response.recommendations.forEach(function (movie) {
+                                $("#recommendationList").append("<li>" + movie + "</li>");
+                            });
+                        }
+                    },
+                    error: function () {
+                        $("#recommendationList").append("<li style='color: red;'>Error fetching recommendations.</li>");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
