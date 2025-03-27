@@ -3,12 +3,28 @@ import pickle
 import pandas as pd
 import numpy as np
 import logging
+import os
 
 # Configure logging to see print statements in the console
 logging.basicConfig(level=logging.DEBUG)
 
-movies = pickle.load(open("movie_list.pkl", "rb"))  # Should be a Pandas DataFrame
-similarity = pickle.load(open("similarity.pkl", "rb"))  # Similarity matrix (NumPy array)
+# URL to your uploaded `similarity.pkl` (Google Drive Direct Link, AWS S3, etc.)
+SIMILARITY_PKL_URL = "https://drive.google.com/file/d/1aJTyCHxvm8pn-0h5G7LI3_KjadFrPuNZ/view?usp=drive_link"
+
+def download_similarity_file():
+    if not os.path.exists("similarity.pkl"):
+        logging.info("Downloading similarity.pkl...")
+        response = requests.get(SIMILARITY_PKL_URL)
+        with open("similarity.pkl", "wb") as file:
+            file.write(response.content)
+        logging.info("similarity.pkl downloaded successfully!")
+
+# Ensure similarity.pkl is available
+download_similarity_file()
+
+# Load required files
+movies = pickle.load(open("movie_list.pkl", "rb"))  # Pandas DataFrame (already in GitHub)
+similarity = pickle.load(open("similarity.pkl", "rb"))  # NumPy similarity matrix
 
 app = Flask(__name__)
 
