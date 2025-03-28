@@ -1,19 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Recommendation</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #141e30, #243b55);
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Container */
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            width: 80%;
+            max-width: 400px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        /* Form Styling */
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        button {
+            background: #ff4b2b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background: #ff3a1a;
+        }
+
+        /* Recommendations List */
+        h2 {
+            margin-top: 20px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: rgba(255, 255, 255, 0.2);
+            margin: 5px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        li.error {
+            color: #ff3a1a;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>Enter a Movie Name for Recommendations</h1>
 
-    <form id="recommendationForm">
-        <input type="text" id="movieInput" name="movie" placeholder="Enter Movie name" required>
-        <button type="submit">Get Recommendations</button>
-    </form>
+    <div class="container">
+        <h1>Enter a Movie Name for Recommendations</h1>
 
-    <h2>Recommended Movies:</h2>
-    <ul id="recommendationList"></ul>
+        <form id="recommendationForm">
+            <input type="text" id="movieInput" name="movie" placeholder="Enter Movie Name" required>
+            <br>
+            <button type="submit">Get Recommendations</button>
+        </form>
+
+        <h2>Recommended Movies:</h2>
+        <ul id="recommendationList"></ul>
+    </div>
 
     <script>
         $(document).ready(function () {
@@ -35,7 +122,7 @@
                         $("#recommendationList").empty(); // Clear previous results
 
                         if (response.error) {
-                            $("#recommendationList").append("<li style='color: red;'>" + response.error + "</li>");
+                            $("#recommendationList").append("<li class='error'>" + response.error + "</li>");
                         } else {
                             response.recommendations.forEach(function (movie) {
                                 $("#recommendationList").append("<li>" + movie + "</li>");
@@ -43,11 +130,12 @@
                         }
                     },
                     error: function () {
-                        $("#recommendationList").append("<li style='color: red;'>Error fetching recommendations.</li>");
+                        $("#recommendationList").append("<li class='error'>Error fetching recommendations.</li>");
                     }
                 });
             });
         });
     </script>
+
 </body>
 </html>
