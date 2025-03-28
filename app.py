@@ -11,22 +11,32 @@ import os
 logging.basicConfig(level=logging.DEBUG)
 
 # URL to your uploaded `similarity.pkl` (Google Drive Direct Link, AWS S3, etc.)
-SIMILARITY_PKL_URL = "https://drive.google.com/file/d/1aJTyCHxvm8pn-0h5G7LI3_KjadFrPuNZ/view?usp=drive_link"
+import requests
+import gdown  # Install using `pip install gdown`
+
+SIMILARITY_PKL_ID = "1aJTyCHxvm8pn-0h5G7LI3_KjadFrPuNZ"  # File ID from Google Drive
+SIMILARITY_PKL_URL = f"https://drive.google.com/uc?export=download&id={SIMILARITY_PKL_ID}"
 
 def download_similarity_file():
     if not os.path.exists("similarity.pkl"):
-        logging.info("Downloading similarity.pkl...")
-        response = requests.get(SIMILARITY_PKL_URL)
-        with open("similarity.pkl", "wb") as file:
-            file.write(response.content)
+        logging.info("Downloading similarity.pkl from Google Drive...")
+        gdown.download(SIMILARITY_PKL_URL, "similarity.pkl", quiet=False)
         logging.info("similarity.pkl downloaded successfully!")
 
 # Ensure similarity.pkl is available
-download_similarity_file()
+if not os.path.exists("similarity.pkl"):
+    download_similarity_file()
+
+try:
+    with open("similarity.pkl", "rb") as file:
+        similarity = pickle.load(file)
+    logging.info("Loaded similarity.pkl successfully!")
+except Exception as e:
+    logging.error(f"Error loading similarity.pkl: {e}")
+    similarity = None  # Prevent breaking the app
 
 # Load required files
 movies = pickle.load(open("movie_list.pkl", "rb"))  # Pandas DataFrame (already in GitHub)
-similarity = pickle.load(open("similarity.pkl", "rb"))  # NumPy similarity matrix
 
 app = Flask(__name__)
 
